@@ -14,9 +14,9 @@ const oAuth2Client = new OAuth2Client(
 const obsidianClient = new OAuth2Client(
   process.env.OBSIDIAN_ID,
   process.env.OBSIDIAN_SECRET,
-  "https://ninth-matter-357304.el.r.appspot.com/auth/obsidian/code"
+  "https://red-formula-303406.ue.r.appspot.com/auth/obsidian/code"
 );
-app.post("/auth/google", async (req, res) => {
+app.post("/auth/stacc", async (req, res) => {
   //console.log(req.body);
   const { tokens } = await oAuth2Client.getToken(req.body.code); // exchange code for tokens
   //console.log(tokens);
@@ -24,7 +24,7 @@ app.post("/auth/google", async (req, res) => {
   res.json(tokens);
 });
 
-app.post("/auth/google/refresh-token", async (req, res) => {
+app.post("/auth/stacc/refresh-token", async (req, res) => {
   const user = new UserRefreshClient(
     process.env.CLIENT_ID,
     process.env.CLIENT_SECRET,
