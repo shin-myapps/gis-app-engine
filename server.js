@@ -1,4 +1,5 @@
 const express = require("express");
+//require('dotenv').config() // only for local development
 const { OAuth2Client, UserRefreshClient } = require("google-auth-library");
 const cors = require("cors");
 const app = express();
@@ -6,9 +7,14 @@ const app = express();
 app.use(cors());
 app.use(express.json());
 
-const oAuth2Client = new OAuth2Client(
-  process.env.CLIENT_ID,
-  process.env.CLIENT_SECRET,
+const staccClient = new OAuth2Client(
+  process.env.STACC_ID,
+  process.env.STACC_SECRET,
+  "postmessage"
+);
+const cleepClient = new OAuth2Client(
+  process.env.CLEEP_ID,
+  process.env.CLEEP_SECRET,
   "postmessage"
 );
 const obsidianClient = new OAuth2Client(
@@ -18,7 +24,7 @@ const obsidianClient = new OAuth2Client(
 );
 app.post("/auth/stacc", async (req, res) => {
   //console.log(req.body);
-  const { tokens } = await oAuth2Client.getToken(req.body.code); // exchange code for tokens
+  const { tokens } = await staccClient.getToken(req.body.code); // exchange code for tokens
   //console.log(tokens);
 
   res.json(tokens);
@@ -26,8 +32,26 @@ app.post("/auth/stacc", async (req, res) => {
 
 app.post("/auth/stacc/refresh-token", async (req, res) => {
   const user = new UserRefreshClient(
-    process.env.CLIENT_ID,
-    process.env.CLIENT_SECRET,
+    process.env.STACC_ID,
+    process.env.STACC_SECRET,
+    req.body.refreshToken
+  );
+  const { credentials } = await user.refreshAccessToken(); // optain new tokens
+  res.json(credentials);
+});
+
+app.post("/auth/cleep", async (req, res) => {
+  //console.log(req.body);
+  const { tokens } = await cleepClient.getToken(req.body.code); // exchange code for tokens
+  //console.log(tokens);
+
+  res.json(tokens);
+});
+
+app.post("/auth/cleep/refresh-token", async (req, res) => {
+  const user = new UserRefreshClient(
+    process.env.CLEEP_ID,
+    process.env.CLEEP_SECRET,
     req.body.refreshToken
   );
   const { credentials } = await user.refreshAccessToken(); // optain new tokens
